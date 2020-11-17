@@ -152,6 +152,12 @@
  *                  acquired timestamp `ts`, and "now" into `acc`, and then
  *                  print the running total. "TACC" is present in the generated
  *                  message.
+ *   - PKTRAW()   - Print the raw timestamp given in `ts`. This can be used
+ *                  to print a timestamp acquired with PKTSTART(), or print
+ *                  a summary / final value for PKTACC() after the event. "TRAW"
+ *                  is present in the generated message.
+ *   - PKTRAWF()  - The same as PKTRAW(), but with a format string - see PK()
+ *                  vs. PKF().
  */
 #ifdef __KERNEL__
 # define PKTSTART(ts) getrawmonotonic(&ts)
@@ -182,5 +188,8 @@
     _PKTACC(ts, acc);                         \
     _PKT("TACC(" #acc ")", acc, fmt, ##args); \
   }
+
+#define PKTRAW(ts)                _PKT("TRAW("  #ts ")", ts, "")
+#define PKTRAWF(ts, fmt, args...) _PKT("TRAWF(" #ts ")", ts, ": " fmt, ##args)
 
 #endif /* PK_H */
