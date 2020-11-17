@@ -24,6 +24,7 @@
 #   define PK_FUNC(fmt, args...)  printk(KERN_INFO fmt,      ##args)
 # else
 #   include <stdio.h>
+#   include <string.h>
 #   define PK_FUNC(fmt, args...) fprintf(stderr,   fmt "\n", ##args)
 # endif
 #endif
@@ -101,12 +102,20 @@
  *                 string. Additionally enclose the variable's value in square
  *                 brackets. This can be useful when printing strings that may
  *                 contain whitespace.
+ *   - PKE()     - Print the given message, suffixed with the errno and relevant
+ *                 string description - like perror().
  */
 #define PK()               _PK("")
 #define PKS(str)           _PK(": %s", str)
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
 #define PKV(fmt, var)      _PK(": " #var ": " fmt, var)
 #define PKVB(fmt, var)     _PK(": " #var ": [" fmt "]", var)
+
+#define PKE(fmt, args...)                                \
+  {                                                      \
+    int _e = errno;                                      \
+    _PK(": " fmt ": %d / %s", ##args, _e, strerror(_e)); \
+  }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * TIME-BASED MESSAGES:
