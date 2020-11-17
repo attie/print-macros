@@ -51,8 +51,25 @@
  *
  *   - _PK()  - Add the tag, file name, line number and function name to the
  *              message, before passing to PK_FUNC().
+ *   - _PKT() - Add the timer's tag and timestamp to the message, before passing
+ *              to _PK() and ultimately PK_FUNC().
  */
 #define _PK(fmt, args...) PK_FUNC(PK_TAG ": " _PKFL " %s()" fmt, __func__, ##args)
+#define _PKT(tag, ts, fmt, args...) _PK(": " tag " @ %ld.%09ld: " fmt, ts.tv_sec, ts.tv_nsec, ##args);
+
+/* These macros take care of time-based calculations. They can be used from user
+ * code if necessary.
+ *
+ *   - _PKTDIFF() - Put the difference between start and "now" into the diff
+ *                  argument.
+ */
+#define _PKTDIFF(start, diff)                                   \
+  {                                                             \
+    PKTSTART(diff);                                             \
+    if (diff.tv_nsec < start.tv_nsec)                           \
+      { diff.tv_sec -= 1; diff.tv_nsec += 1000000000; }         \
+    diff.tv_sec -= start.tv_sec; diff.tv_nsec -= start.tv_nsec; \
+  }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * GENERIC MESSAGES:
@@ -79,5 +96,48 @@
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
 #define PKV(fmt, var)      _PK(": " #var ": " fmt, var)
 #define PKVB(fmt, var)     _PK(": " #var ": [" fmt "]", var)
+
+/* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
+ * TIME-BASED MESSAGES:
+ */
+
+/* These macros are the intended public interface for time-based messages, and
+ * should be used from within your application.
+ *
+ *   - PKTSTART() - Retrieve the current monotonic timestamp, and store it in
+ *                  ts. It should be called before PKTDIFF() and PKTACC() to
+ *                  acquire a starting timestamp.
+ *                  The `ts` argument is expected to be a `struct timespec`.
+ *   - PKTSTAMP() - Print the current timestamp, with "TSTAMP" in the generated
+ *                  message. The generated message has time specified to nano-
+ *                  seconds, but this resolution may not be technically
+ *                  attainable on your system.
+ *   - PKTDIFF()  - Print the difference in time between a timestamp that was
+ *                  previously taken with PKTSTART(), and now. "TDIFF" is present
+ *                  in the generated message.
+ */
+#ifdef __KERNEL__
+# define PKTSTART(ts) getrawmonotonic(&ts)
+#else
+# include <time.h>
+# define PKTSTART(ts)                                                \
+  {                                                                  \
+    int _ret;                                                        \
+    if ((_ret = clock_gettime(CLOCK_REALTIME, &ts)) != 0)            \
+      PKF("PKTSTART: clock_gettime(&" #ts ") returned %d...", _ret); \
+  }
+#endif
+
+#define PKTSTAMP(fmt, args...)        \
+  {                                   \
+    struct timespec _t; PKTSTART(_t); \
+    _PKT("TSTAMP", _t, fmt, ##args);  \
+  }
+
+#define PKTDIFF(ts, fmt, args...)            \
+  {                                          \
+    struct timespec _t; _PKTDIFF(ts, _t);    \
+    _PKT("TDIFF(" #ts ")", _t, fmt, ##args); \
+  }
 
 #endif /* PK_H */
