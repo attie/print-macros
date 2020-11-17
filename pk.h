@@ -62,6 +62,8 @@
  *
  *   - _PKTDIFF() - Put the difference between start and "now" into the diff
  *                  argument.
+ *   - _PKTACC()  - Accumulate the difference between start and "now" into the
+ *                  acc argument.
  */
 #define _PKTDIFF(start, diff)                                   \
   {                                                             \
@@ -69,6 +71,15 @@
     if (diff.tv_nsec < start.tv_nsec)                           \
       { diff.tv_sec -= 1; diff.tv_nsec += 1000000000; }         \
     diff.tv_sec -= start.tv_sec; diff.tv_nsec -= start.tv_nsec; \
+  }
+
+#define _PKTACC(start, acc)                             \
+  {                                                     \
+    struct timespec _t; PKTSTART(_t);                   \
+    _PKTDIFF(start, _t);                                \
+    acc.tv_nsec += _t.tv_nsec; acc.tv_sec += _t.tv_sec; \
+    if (acc.tv_nsec >= 1000000000)                      \
+      { acc.tv_sec += 1; acc.tv_nsec -= 1000000000; }   \
   }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
@@ -115,6 +126,10 @@
  *   - PKTDIFF()  - Print the difference in time between a timestamp that was
  *                  previously taken with PKTSTART(), and now. "TDIFF" is present
  *                  in the generated message.
+ *   - PKTACC()   - Accumulate the difference in time between a previously
+ *                  acquired timestamp `ts`, and "now" into `acc`, and then
+ *                  print the running total. "TACC" is present in the generated
+ *                  message.
  */
 #ifdef __KERNEL__
 # define PKTSTART(ts) getrawmonotonic(&ts)
@@ -138,6 +153,12 @@
   {                                          \
     struct timespec _t; _PKTDIFF(ts, _t);    \
     _PKT("TDIFF(" #ts ")", _t, fmt, ##args); \
+  }
+
+#define PKTACC(ts, acc, fmt, args...)         \
+  {                                           \
+    _PKTACC(ts, acc);                         \
+    _PKT("TACC(" #acc ")", acc, fmt, ##args); \
   }
 
 #endif /* PK_H */
