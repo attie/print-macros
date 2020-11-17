@@ -61,26 +61,39 @@
 /* These macros take care of time-based calculations. They can be used from user
  * code if necessary.
  *
+ *   - _PKTADD()  - Add a to b, and store the result in b.
+ *   - _PKTSUB()  - Subtract a from b, and store the result in b.
  *   - _PKTDIFF() - Put the difference between start and "now" into the diff
  *                  argument.
  *   - _PKTACC()  - Accumulate the difference between start and "now" into the
  *                  acc argument.
  */
-#define _PKTDIFF(start, diff)                                   \
-  {                                                             \
-    PKTSTART(diff);                                             \
-    if (diff.tv_nsec < start.tv_nsec)                           \
-      { diff.tv_sec -= 1; diff.tv_nsec += 1000000000; }         \
-    diff.tv_sec -= start.tv_sec; diff.tv_nsec -= start.tv_nsec; \
+#define _PKTADD(a, b)                             \
+  {                                               \
+    b.tv_nsec += a.tv_nsec; b.tv_sec += a.tv_sec; \
+    if (b.tv_nsec >= 1000000000)                  \
+      { b.tv_sec += 1; b.tv_nsec -= 1000000000; } \
   }
 
-#define _PKTACC(start, acc)                             \
-  {                                                     \
-    struct timespec _t; PKTSTART(_t);                   \
-    _PKTDIFF(start, _t);                                \
-    acc.tv_nsec += _t.tv_nsec; acc.tv_sec += _t.tv_sec; \
-    if (acc.tv_nsec >= 1000000000)                      \
-      { acc.tv_sec += 1; acc.tv_nsec -= 1000000000; }   \
+#define _PKTSUB(a, b)                             \
+  {                                               \
+    if (b.tv_nsec < a.tv_nsec)                    \
+      { b.tv_sec -= 1; b.tv_nsec += 1000000000; } \
+    b.tv_sec -= a.tv_sec; b.tv_nsec -= a.tv_nsec; \
+  }
+
+#define _PKTDIFF(start, diff) \
+  {                           \
+    PKTSTART(diff);           \
+    _PKTSUB(start, diff);     \
+  }
+
+#define _PKTACC(start, acc) \
+  {                         \
+    struct timespec _t;     \
+    PKTSTART(_t);           \
+    _PKTDIFF(start, _t);    \
+    _PKTADD(_t, acc);       \
   }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
