@@ -11,6 +11,10 @@
  * attempt at reducing unwanted side effects.
  */
 
+#ifndef __KERNEL__
+# include <errno.h>
+#endif
+
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * CONFIGURATION:
  */
