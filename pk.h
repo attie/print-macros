@@ -40,9 +40,20 @@
 # define PK_TAG "ATTIE"
 #endif
 
+/* Optionally define PK_DUMP_WIDTH to adjust the width of hexdump output, in
+ * bytes.
+ */
+#ifndef PK_DUMP_WIDTH
+# define PK_DUMP_WIDTH 16
+#endif
+
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * INTERNAL / SUPPORT:
  */
+
+#ifndef __KERNEL__
+# include <stdint.h>
+#endif
 
 /* Stringification */
 #define _PKS2(x) #x
@@ -101,6 +112,33 @@
     _PKTDIFF(start, _t);    \
     _PKTADD(_t, acc);       \
   }
+
+/* This function takes care of producing a hex-dump. It should not be used from
+ * user code. PK_FUNC must be called directly to maintain the file, line number
+ * and function name from the original location the macro was used.
+ */
+static inline void _pk_dump(const char *_pkfl, const char *_pkfn, uint8_t *data, size_t len) {
+	size_t i, o;
+	char buf_hex  [(PK_DUMP_WIDTH * 3) + 1];
+	char buf_print[ PK_DUMP_WIDTH      + 1];
+
+	for (i = 0; (data != NULL) && (i < len); i++) {
+		o = i % PK_DUMP_WIDTH;
+
+		snprintf(&(buf_hex[o * 3]), 4, " %02hhx", data[i]);
+		buf_print[o] = ((data[i] >= ' ') && (data[i] <= '~')) ? data[i] : '.';
+
+		if ((o < (PK_DUMP_WIDTH - 1)) && (i < (len - 1))) {
+			continue;
+		}
+
+		PK_FUNC(PK_TAG ": %s %s(): DUMP: 0x%04x:%-*.*s | %-*.*s",
+			_pkfl, _pkfn, i - o,
+			PK_DUMP_WIDTH * 3, ((o+1) * 3), buf_hex,
+			PK_DUMP_WIDTH,      (o+1),      buf_print
+		);
+	}
+}
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * GENERIC MESSAGES:
@@ -214,5 +252,29 @@
 #define PKTRAW(ts)                _PKT("TRAW("  #ts ")", ts, "")
 #define PKTRAWS(ts, str)          _PKT("TRAWF(" #ts ")", ts, ": %s", str)
 #define PKTRAWF(ts, fmt, args...) _PKT("TRAWF(" #ts ")", ts, ": " fmt, ##args)
+
+/* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
+ * HEX-DUMP MESSAGES:
+ */
+
+/* These macros are the intended public interface for producing hex-dumps, with
+ * a header message, and should be used from within your application.
+ *
+ *   - PKDUMP()  - Print a hexdump with the given format string and associated
+ *                 arguments as the header. The dump will be wrapped with cut
+ *                 marks, and all output will be prefixed with the same file,
+ *                 line number and function name. "DUMP" is present in the
+ *                 generated output.
+ */
+#define PKDUMP(data, len, fmt, args...)             \
+  {                                                 \
+    PKF("DUMP: " fmt, ##args);                      \
+    PKF("DUMP: %zu bytes @ %p", len, data);         \
+    if ((data != NULL) && (len != 0)) {             \
+      PKF("DUMP: ---8<---[ dump begins ]---8<---"); \
+      _pk_dump(_PKFL, __func__, data, len);         \
+      PKF("DUMP: ---8<---[  dump ends  ]---8<---"); \
+    }                                               \
+  }
 
 #endif /* PK_H */
