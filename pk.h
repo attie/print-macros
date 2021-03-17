@@ -171,13 +171,13 @@
  *                  vs. PKF().
  */
 #ifdef __KERNEL__
-# define PKTSTART(ts) getrawmonotonic(&ts)
+# define PKTSTART(ts) getrawmonotonic(&(ts))
 #else
 # include <time.h>
 # define PKTSTART(ts)                                                \
   {                                                                  \
     int _ret;                                                        \
-    if ((_ret = clock_gettime(CLOCK_REALTIME, &ts)) != 0)            \
+    if ((_ret = clock_gettime(CLOCK_REALTIME, &(ts))) != 0)          \
       PKF("PKTSTART: clock_gettime(&" #ts ") returned %d...", _ret); \
   }
 #endif
