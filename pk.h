@@ -158,6 +158,11 @@
  *                  acquired timestamp `ts`, and "now" into `acc`, and then
  *                  print the running total. "TACC" is present in the generated
  *                  message.
+ *   - PKTRATE()  - Calculate the difference in time between a timestamp that
+ *                  was previously taken with PKTSTART(), and then print a
+ *                  message conveying the number of items, time taken and the
+ *                  calculated frequency. "TRATE" is present in the generated
+ *                  message.
  *   - PKTRAW()   - Print the raw timestamp given in `ts`. This can be used
  *                  to print a timestamp acquired with PKTSTART(), or print
  *                  a summary / final value for PKTACC() after the event. "TRAW"
@@ -193,6 +198,15 @@
   {                                           \
     _PKTACC(ts, acc);                         \
     _PKT("TACC(" #acc ")", acc, fmt, ##args); \
+  }
+
+#define PKTRATE(ts, n, fmt, args...)                             \
+  {                                                              \
+    struct timespec _t; double _f;                               \
+    _PKTDIFF(ts, _t);                                            \
+    _f = n / (_t.tv_sec + (_t.tv_nsec / 1000000000.0f));         \
+    _PK(": TRATE(" #ts "), n=%d, t=%ld.%09ld, f=%1.3f Hz: " fmt, \
+        n, _t.tv_sec, _t.tv_nsec, _f, ##args);                   \
   }
 
 #define PKTRAW(ts)                _PKT("TRAW("  #ts ")", ts, "")
