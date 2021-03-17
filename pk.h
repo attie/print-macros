@@ -44,11 +44,13 @@
  * INTERNAL / SUPPORT:
  */
 
-/* These macros are used to build static strings containing the filename and
- * line number. _PKFL expands to this string, _PKS and _PKS2 should not be used.
- */
+/* Stringification */
 #define _PKS2(x) #x
 #define _PKS(x) _PKS2(x)
+
+/* These macros are used to build static strings containing the filename and
+ * line number. _PKFL expands to the string "${filename}:${lineno}".
+ */
 #define _PKFL __FILE__ ":" _PKS(__LINE__)
 
 /* These macros are the fundamental building blocks of this functionality. They
