@@ -167,6 +167,8 @@
  *                  to print a timestamp acquired with PKTSTART(), or print
  *                  a summary / final value for PKTACC() after the event. "TRAW"
  *                  is present in the generated message.
+ *   - PKTRAWS()  - The same as PKTRAW(), but with a static string - see PK()
+ *                  vs. PKS().
  *   - PKTRAWF()  - The same as PKTRAW(), but with a format string - see PK()
  *                  vs. PKF().
  */
@@ -210,6 +212,7 @@
   }
 
 #define PKTRAW(ts)                _PKT("TRAW("  #ts ")", ts, "")
+#define PKTRAWS(ts, str)          _PKT("TRAWF(" #ts ")", ts, ": %s", str)
 #define PKTRAWF(ts, fmt, args...) _PKT("TRAWF(" #ts ")", ts, ": " fmt, ##args)
 
 #endif /* PK_H */
