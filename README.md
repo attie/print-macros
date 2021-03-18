@@ -7,7 +7,7 @@ Effort has been made to reduce the processing required at run-time, in an attemp
 
 ## Usage
 
-See [`example.c`](./example.c) for example usage.
+See [`example.c`](./example.c) for example usage, and [`example.log`](./example.log) for the expected output.
 
 The example application can be build and run by running `make run`.
 
