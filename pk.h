@@ -117,7 +117,8 @@
  * user code. PK_FUNC must be called directly to maintain the file, line number
  * and function name from the original location the macro was used.
  */
-static inline void _pk_dump(const char *_pkfl, const char *_pkfn, uint8_t *data, size_t len) {
+static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, size_t len) {
+	uint8_t *data = _data;
 	size_t i, o;
 	char buf_hex  [(PK_DUMP_WIDTH * 3) + 1];
 	char buf_print[ PK_DUMP_WIDTH      + 1];
@@ -132,10 +133,10 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, uint8_t *data,
 			continue;
 		}
 
-		PK_FUNC(PK_TAG ": %s %s(): DUMP: 0x%04x:%-*.*s | %-*.*s",
+		PK_FUNC(PK_TAG ": %s %s(): DUMP: 0x%04zx:%-*.*s | %-*.*s",
 			_pkfl, _pkfn, i - o,
-			PK_DUMP_WIDTH * 3, ((o+1) * 3), buf_hex,
-			PK_DUMP_WIDTH,      (o+1),      buf_print
+			PK_DUMP_WIDTH * 3, (int)((o+1) * 3), buf_hex,
+			PK_DUMP_WIDTH,     (int) (o+1),      buf_print
 		);
 	}
 }
@@ -269,7 +270,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, uint8_t *data,
 #define PKDUMP(data, len, fmt, args...)             \
   {                                                 \
     PKF("DUMP: " fmt, ##args);                      \
-    PKF("DUMP: %zu bytes @ %p", len, data);         \
+    PKF("DUMP: %zu bytes @ %p", (size_t)len, data); \
     if ((data != NULL) && (len != 0)) {             \
       PKF("DUMP: ---8<---[ dump begins ]---8<---"); \
       _pk_dump(_PKFL, __func__, data, len);         \
