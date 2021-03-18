@@ -223,21 +223,21 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
   }
 #endif
 
-#define PKTSTAMP(fmt, args...)        \
-  {                                   \
-    struct timespec _t; PKTSTART(_t); \
+#define PKTSTAMP(fmt, args...)             \
+  {                                        \
+    struct timespec _t; PKTSTART(_t);      \
     _PKT("TSTAMP", _t, ": " fmt, ##args);  \
   }
 
-#define PKTDIFF(ts, fmt, args...)            \
-  {                                          \
-    struct timespec _t; _PKTDIFF(ts, _t);    \
+#define PKTDIFF(ts, fmt, args...)                 \
+  {                                               \
+    struct timespec _t; _PKTDIFF(ts, _t);         \
     _PKT("TDIFF(" #ts ")", _t, ": " fmt, ##args); \
   }
 
-#define PKTACC(ts, acc, fmt, args...)         \
-  {                                           \
-    _PKTACC(ts, acc);                         \
+#define PKTACC(ts, acc, fmt, args...)              \
+  {                                                \
+    _PKTACC(ts, acc);                              \
     _PKT("TACC(" #acc ")", acc, ": " fmt, ##args); \
   }
 
