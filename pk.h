@@ -73,7 +73,7 @@
  *              to _PK() and ultimately PK_FUNC().
  */
 #define _PK(fmt, args...) PK_FUNC(PK_TAG ": " _PKFL " %s()" fmt, __func__, ##args)
-#define _PKT(tag, ts, fmt, args...) _PK(": " tag " @ %ld.%09ld: " fmt, ts.tv_sec, ts.tv_nsec, ##args);
+#define _PKT(tag, ts, fmt, args...) _PK(": " tag " @ %ld.%09ld" fmt, ts.tv_sec, ts.tv_nsec, ##args);
 
 /* These macros take care of time-based calculations. They can be used from user
  * code if necessary.
@@ -226,19 +226,19 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
 #define PKTSTAMP(fmt, args...)        \
   {                                   \
     struct timespec _t; PKTSTART(_t); \
-    _PKT("TSTAMP", _t, fmt, ##args);  \
+    _PKT("TSTAMP", _t, ": " fmt, ##args);  \
   }
 
 #define PKTDIFF(ts, fmt, args...)            \
   {                                          \
     struct timespec _t; _PKTDIFF(ts, _t);    \
-    _PKT("TDIFF(" #ts ")", _t, fmt, ##args); \
+    _PKT("TDIFF(" #ts ")", _t, ": " fmt, ##args); \
   }
 
 #define PKTACC(ts, acc, fmt, args...)         \
   {                                           \
     _PKTACC(ts, acc);                         \
-    _PKT("TACC(" #acc ")", acc, fmt, ##args); \
+    _PKT("TACC(" #acc ")", acc, ": " fmt, ##args); \
   }
 
 #define PKTRATE(ts, n, fmt, args...)                             \
