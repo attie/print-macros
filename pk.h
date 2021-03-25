@@ -170,6 +170,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
   {                                                      \
     int _e = errno;                                      \
     _PK(": " fmt ": %d / %s", ##args, _e, strerror(_e)); \
+    errno = _e;                                          \
   }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
