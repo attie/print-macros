@@ -126,9 +126,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
 		snprintf(&(buf_hex[o * 3]), 4, " %02hhx", data[i]);
 		buf_print[o] = ((data[i] >= ' ') && (data[i] <= '~')) ? data[i] : '.';
 
-		if ((o < (PK_DUMP_WIDTH - 1)) && (i < (len - 1))) {
-			continue;
-		}
+		if ((o < (PK_DUMP_WIDTH - 1)) && (i < (len - 1))) continue;
 
 		PK_FUNC(PK_TAG ": %s %s(): DUMP: 0x%04zx:%-*.*s | %-*.*s",
 			_pkfl, _pkfn, i - o,
