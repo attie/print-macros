@@ -166,11 +166,12 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
 #define PKV(fmt, var)      _PK(": " #var ": " fmt, var)
 #define PKVB(fmt, var)     _PK(": " #var ": [" fmt "]", var)
 
-#define PKE(fmt, args...)                                \
-  {                                                      \
-    int _e = errno;                                      \
-    _PK(": " fmt ": %d / %s", ##args, _e, strerror(_e)); \
-    errno = _e;                                          \
+#define PKE(fmt, args...)                                         \
+  {                                                               \
+    int _e = errno; char _s[1024];                                \
+    strerror_r(_e, _s, sizeof(_s));                               \
+    _PK(": " fmt ": %d / %.*s", ##args, _e, (int)sizeof(_s), _s); \
+    errno = _e;                                                   \
   }
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
