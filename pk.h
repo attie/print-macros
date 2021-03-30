@@ -204,9 +204,9 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
  *                  a summary / final value for PKTACC() after the event. "TRAW"
  *                  is present in the generated message.
  *   - PKTRAWS()  - The same as PKTRAW(), but with a static string - see PK()
- *                  vs. PKS().
+ *                  vs. PKS(). "TRAWS" is present in the generated message.
  *   - PKTRAWF()  - The same as PKTRAW(), but with a format string - see PK()
- *                  vs. PKF().
+ *                  vs. PKF(). "TRAWF" is present in the generated message.
  */
 #ifdef __KERNEL__
 # define PKTSTART(ts) getrawmonotonic(&(ts))
@@ -248,7 +248,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, s
   }
 
 #define PKTRAW(ts)                _PKT("TRAW("  #ts ")", ts, "")
-#define PKTRAWS(ts, str)          _PKT("TRAWF(" #ts ")", ts, ": %s", str)
+#define PKTRAWS(ts, str)          _PKT("TRAWS(" #ts ")", ts, ": %s", str)
 #define PKTRAWF(ts, fmt, args...) _PKT("TRAWF(" #ts ")", ts, ": " fmt, ##args)
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
