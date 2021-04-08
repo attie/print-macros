@@ -114,8 +114,8 @@
  * user code. PK_FUNC must be called directly to maintain the file, line number
  * and function name from the original location the macro was used.
  */
-static inline void _pk_dump(const char *_pkfl, const char *_pkfn, void *_data, size_t len) {
-	uint8_t *data = _data;
+static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_data, size_t len) {
+	const uint8_t *data = _data;
 	size_t i, o;
 	char buf_hex  [(PK_DUMP_WIDTH * 3) + 1];
 	char buf_print[ PK_DUMP_WIDTH      + 1];
