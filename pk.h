@@ -15,7 +15,7 @@
  * CONFIGURATION:
  */
 
-/* Optionally define PK_LEVEL in kernel space.
+/* Optionally define PK_LEVEL in kernel space or U-Boot.
  */
 #ifndef PK_LEVEL
 # if defined(__KERNEL__)
@@ -27,10 +27,16 @@
  * and args...) are equivelant to those passed to printf().
  */
 #ifndef PK_FUNC
-# ifdef __KERNEL__
+# if defined(__KERNEL__) && defined(__UBOOT__)
+    /* U-Boot */
+#   include <linux/printk.h>
+#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt "\n",  ##args)
+# elif defined(__KERNEL__) && defined(__linux__)
+    /* Linux Kernel */
 #   include <linux/printk.h>
 #   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,       ##args)
 # else
+    /* Userspace */
 #   include <stdio.h>
 #   include <string.h>
 #   define PK_FUNC(fmt, args...) fprintf(stderr,   fmt "\n", ##args)
