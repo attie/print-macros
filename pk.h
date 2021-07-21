@@ -150,6 +150,29 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
 	}
 }
 
+/* This function takes care of splitting a buffer into multiple chunks,
+ * delimited by `c`. On the first call, `*cookie` must be NULL. The returned
+ * pointer indicates the start of the chunk, and `*chunklen` indicates the
+ * length of that chunk. The buffer is never modified, so when passing the chunk
+ * to printf() or similar, a "%.*s" format string should be used. Zero length
+ * chunkss (i.e: "\n\n") are maintained. */
+static inline const char *_pk_nextchunk(const char *buf, size_t len, const char **cookie, size_t *chunklen, const char c) {
+	const char *start, *end;
+
+	if ((buf == NULL) || (len == 0) || (cookie == NULL)) return NULL;
+	if (*cookie == NULL) *cookie = buf;
+
+	start = *cookie; end = buf + len;
+
+	if ((start < buf) || (start >= end) || (**cookie == '\0')) return NULL;
+	while ((*cookie < end) && (**cookie != '\0') && (**cookie != c)) *cookie += 1;
+
+	if (chunklen != NULL) *chunklen = *cookie - start;
+	if (**cookie == c) *cookie += 1;
+
+	return start;
+}
+
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * GENERIC MESSAGES:
  */
@@ -277,6 +300,12 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
  *                 marks, and all output will be prefixed with the same file,
  *                 line number and function name. "DUMP" is present in the
  *                 generated output.
+ *   - PKLINES() - Print a multi-line block of text with the given format string
+ *                 and associated arguments as the header. The output will be
+ *                 wrapped wit cut marks, and all output will be prefixed with
+ *                 the same file, line number and function name. "LINES" is
+ *                 present in the generated output. Output is terminated on a
+ *                 nul character ('\0').
  */
 #define PKDUMP(data, len, fmt, args...)             \
   {                                                 \
@@ -287,6 +316,20 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
       _pk_dump(_PKFL, __func__, data, len);         \
       PKF("DUMP: ---8<---[  dump ends  ]---8<---"); \
     }                                               \
+  }
+
+#define PKLINES(data, len, fmt, args...)                                            \
+  {                                                                                 \
+    int i = 0; size_t ll; const char *ls, *p = NULL;                                \
+    PKF("LINES: " fmt, ##args);                                                     \
+    PKF("LINES: %zu chars max @ %p", (size_t)len, data);                            \
+    if ((data != NULL) && (len != 0)) {                                             \
+      PKF("LINES: ---8<---[ output begins ]---8<---");                              \
+      for (i = 0; (ls = _pk_nextchunk(data, len, &p, &ll, '\n')) != NULL; i += 1) { \
+        PKF("LINES: %05d: %.*s", i, (int)ll, ls);                                   \
+      }                                                                             \
+      PKF("LINES: ---8<---[  output ends  ]---8<---");                              \
+    }                                                                               \
   }
 
 #endif /* PK_H */
