@@ -15,13 +15,21 @@
  * CONFIGURATION:
  */
 
+/* Optionally define PK_LEVEL in kernel space.
+ */
+#ifndef PK_LEVEL
+# if defined(__KERNEL__)
+#   define PK_LEVEL KERN_INFO
+# endif
+#endif
+
 /* Optionally define PK_FUNC to redirect the message output. The arguments (fmt
  * and args...) are equivelant to those passed to printf().
  */
 #ifndef PK_FUNC
 # ifdef __KERNEL__
 #   include <linux/printk.h>
-#   define PK_FUNC(fmt, args...)  printk(KERN_INFO fmt,      ##args)
+#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,       ##args)
 # else
 #   include <stdio.h>
 #   include <string.h>
