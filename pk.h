@@ -29,17 +29,12 @@
 #ifndef PK_FUNC
 # if defined(__KERNEL__) && defined(__UBOOT__)
     /* U-Boot */
-#   include <linux/printk.h>
 #   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt "\n",  ##args)
 # elif defined(__KERNEL__) && defined(__linux__)
     /* Linux Kernel */
-#   include <linux/kernel.h>
-#   include <linux/printk.h>
 #   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,       ##args)
 # else
     /* Userspace */
-#   include <stdio.h>
-#   include <string.h>
 #   define PK_FUNC(fmt, args...) fprintf(stderr,   fmt "\n", ##args)
 # endif
 #endif
@@ -63,8 +58,13 @@
  */
 
 #ifndef __KERNEL__
+# include <stdio.h>
 # include <stdint.h>
+# include <string.h>
 # include <errno.h>
+#else
+# include <linux/kernel.h>
+# include <linux/printk.h>
 #endif
 
 /* Stringification */
