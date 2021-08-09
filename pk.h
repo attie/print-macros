@@ -178,6 +178,10 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  * GENERIC MESSAGES:
  */
 
+#define _PKV_fmt(fmt, var)   #var ": " fmt
+#define _PKVB_fmt(fmt, var)  #var ": [" fmt "]"
+#define _PKV_var(fmt, var)   var
+
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
  *
@@ -196,11 +200,12 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *   - PKE()     - Print the given message, suffixed with the errno and relevant
  *                 string description - like perror().
  */
+
 #define PK()               _PK("")
 #define PKS(str)           _PK(": %s", str)
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
-#define PKV(fmt, var)      _PK(": " #var ": " fmt, var)
-#define PKVB(fmt, var)     _PK(": " #var ": [" fmt "]", var)
+#define PKV(fmt, var)      _PK(": " _PKV_fmt(fmt, var),  _PKV_var(fmt, var))
+#define PKVB(fmt, var)     _PK(": " _PKVB_fmt(fmt, var), _PKV_var(fmt, var))
 
 #define PKE(fmt, args...)                                         \
   {                                                               \
