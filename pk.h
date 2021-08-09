@@ -181,6 +181,10 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define _PKV_fmt(fmt, var)   #var ": " fmt
 #define _PKVB_fmt(fmt, var)  #var ": [" fmt "]"
 #define _PKV_var(fmt, var)   var
+#define _PKVN_sep()          ",  "
+#define _PKVN_fmt(args...)   MAP_PAIRS(_PKV_fmt,  _PKVN_sep, ##args)
+#define _PKVBN_fmt(args...)  MAP_PAIRS(_PKVB_fmt, _PKVN_sep, ##args)
+#define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
 
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
@@ -192,11 +196,13 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *   - PKF()     - Print the base message, with a fully-formed format string and
  *                 associated arguments.
  *   - PKV()     - Print the name and value of a variable using the given format
- *                 string.
+ *                 string. Multiple variables may be presented by giving more
+ *                 than one format / variable pair.
  *   - PKVB()    - Print the name and value of a variable using the given format
  *                 string. Additionally enclose the variable's value in square
  *                 brackets. This can be useful when printing strings that may
- *                 contain whitespace.
+ *                 contain whitespace. Multiple variables may be presented by
+ *                 giving more than one format / variable pair.
  *   - PKE()     - Print the given message, suffixed with the errno and relevant
  *                 string description - like perror().
  */
@@ -204,8 +210,8 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PK()               _PK("")
 #define PKS(str)           _PK(": %s", str)
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
-#define PKV(fmt, var)      _PK(": " _PKV_fmt(fmt, var),  _PKV_var(fmt, var))
-#define PKVB(fmt, var)     _PK(": " _PKVB_fmt(fmt, var), _PKV_var(fmt, var))
+#define PKV(fmt_arg...)    _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
+#define PKVB(fmt_arg...)   _PK(": " _PKVBN_fmt(fmt_arg), _PKVN_var(fmt_arg))
 
 #define PKE(fmt, args...)                                         \
   {                                                               \
@@ -337,5 +343,46 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
       PKF("LINES: ---8<---[  output ends  ]---8<---");                              \
     }                                                                               \
   }
+
+/* the following macros are copied from the uSHET project:
+ *    https://github.com/18sg/uSHET/blob/master/lib/cpp_magic.h
+ * please refer to the source for documentation */
+#define EVAL(...) EVAL1024(__VA_ARGS__)
+#define EVAL1024(...) EVAL512(EVAL512(__VA_ARGS__))
+#define EVAL512(...) EVAL256(EVAL256(__VA_ARGS__))
+#define EVAL256(...) EVAL128(EVAL128(__VA_ARGS__))
+#define EVAL128(...) EVAL64(EVAL64(__VA_ARGS__))
+#define EVAL64(...) EVAL32(EVAL32(__VA_ARGS__))
+#define EVAL32(...) EVAL16(EVAL16(__VA_ARGS__))
+#define EVAL16(...) EVAL8(EVAL8(__VA_ARGS__))
+#define EVAL8(...) EVAL4(EVAL4(__VA_ARGS__))
+#define EVAL4(...) EVAL2(EVAL2(__VA_ARGS__))
+#define EVAL2(...) EVAL1(EVAL1(__VA_ARGS__))
+#define EVAL1(...) __VA_ARGS__
+#define EMPTY()
+#define COMMA() ,
+#define BOOL(x) NOT(NOT(x))
+#define DEFER2(id) id EMPTY EMPTY()()
+#define CAT(a, ...) a ## __VA_ARGS__
+#define FIRST(a, ...) a
+#define SECOND(a, b, ...) b
+#define IS_PROBE(...) SECOND(__VA_ARGS__, 0)
+#define PROBE() ~, 1
+#define NOT(x) IS_PROBE(CAT(_NOT_, x))
+#define _NOT_0 PROBE()
+#define IF(c) _IF(BOOL(c))
+#define _IF(c) CAT(_IF_,c)
+#define _IF_0(...)
+#define _IF_1(...) __VA_ARGS__
+#define HAS_ARGS(...) BOOL(FIRST(_END_OF_ARGUMENTS_ __VA_ARGS__)(0))
+#define _END_OF_ARGUMENTS_(...) BOOL(FIRST(__VA_ARGS__))
+#define MAP_PAIRS(op,sep,...) \
+  IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_PAIRS_INNER(op,sep,__VA_ARGS__)))
+#define MAP_PAIRS_INNER(op,sep,cur_val_1, cur_val_2, ...) \
+  op(cur_val_1,cur_val_2) \
+  IF(HAS_ARGS(__VA_ARGS__))( \
+    sep() DEFER2(_MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__) \
+  )
+#define _MAP_PAIRS_INNER() MAP_PAIRS_INNER
 
 #endif /* PK_H */

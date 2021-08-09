@@ -44,6 +44,10 @@ int main(int argc, char *argv[]) {
 	PKV("%d", i);
 	PKVB("%s", s);
 
+	/* PKV() and PKVB() may also be used to print multiple name / value pairs
+	 */
+	PKV("%d", i, "[%s]", s);
+
 	/* PKE() will output the value of errno, and the relevant descripive string
 	 */
 	errno = EINVAL;
