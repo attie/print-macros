@@ -42,6 +42,7 @@ The example application can be build and run by running `make run`.
 - `PKTRAW(ts)` - Just print the given timestamp, perhaps as acquired by other means.
 - `PKTRAWS(ts, str)`, `PKTRAWF(ts, fmt, args...)` - Equivelant to `PKS()` and `PKF()` respectively.
 
-### Hex Dump
+### Dump
 
 - `PKDUMP(data, len, fmt, args...)` - Output the given format string, followed by the memory size and location, and finally a hex dump of this memory.
+- `PKLINES(data, len, fmt, args...)` - Output the given format string, followed by the memory size and location, and finally a block of text.
