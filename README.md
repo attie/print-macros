@@ -1,7 +1,7 @@
 # Attie's `printf()` / `printk()` Support Macros
 
 These are intended only for development purposes, and are not considered suitable for use in production-ready code.
-This header file should perform correctly when used from both within the Linux kernel, as well as userspace.
+This header file should perform correctly when used from within all of U-Boot, the Linux kernel, as well as userspace.
 
 Effort has been made to reduce the processing required at run-time, in an attempt at reducing unwanted side effects.
 
@@ -9,13 +9,16 @@ Effort has been made to reduce the processing required at run-time, in an attemp
 
 See [`example.c`](./example.c) for example usage, and [`example.log`](./example.log) for the expected output.
 
-The example application can be build and run by running `make run`.
+The example application can be built and run by running `make run`.
 
 ## Configuration
 
+- `PK_LEVEL` - Provide an output level (Kernel and U-Boot only)
+  - Default: `KERN_INFO`
 - `PK_FUNC(fmt, args...)` - Provides a usable printf-like function that can be called to produce output.
   - Userspace default: `fprintf(stderr, fmt "\n", ##args)`
-  - Kernel default: `printk(KERN_INFO fmt, ##args)`
+  - Kernel default: `printk(PK_LEVEL fmt, ##args)`
+  - U-Boot default: `printk(PK_LEVEL fmt "\n", ##args)`
 - `PK_TAG` - Resolve to a string literal, that will be at the beginning of every output line.
   - Default: `"ATTIE"`
 - `PK_DUMP_WIDTH` - Resolves to an integer literal, that will alter the width of the hex dump output.
