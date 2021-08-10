@@ -186,6 +186,22 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define _PKVBN_fmt(args...)  MAP_PAIRS(_PKVB_fmt, _PKVN_sep, ##args)
 #define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
 
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !defined(_GNU_SOURCE)
+  /* XSI strerror_r() */
+# define _PKE_STRERROR(e, s, l)     \
+  {                                 \
+    int _r = strerror_r(e, s, l);   \
+    if (_r != 0) s = "";            \
+  }
+#else
+  /* GNU strerror_r() */
+# define _PKE_STRERROR(e, s, l)     \
+  {                                 \
+    char *_r = strerror_r(e, s, l); \
+    s = _r == NULL ? "" : _r;       \
+  }
+#endif
+
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
  *
@@ -215,9 +231,10 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 
 #define PKE(fmt, args...)                                         \
   {                                                               \
-    int _e = errno; char _s[1024];                                \
-    strerror_r(_e, _s, sizeof(_s));                               \
-    _PK(": " fmt ": %d / %.*s", ##args, _e, (int)sizeof(_s), _s); \
+    int _e = errno; char _s[1024]; char *_c = &(_s[0]);           \
+    _PKE_STRERROR(_e, _c, sizeof(_s));                            \
+    if (_c[0] == '\0') _c = "Unknown error";                      \
+    _PK(": " fmt ": %d / %.*s", ##args, _e, (int)sizeof(_s), _c); \
     errno = _e;                                                   \
   }
 
