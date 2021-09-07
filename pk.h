@@ -186,22 +186,6 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define _PKVBN_fmt(args...)  MAP_PAIRS(_PKVB_fmt, _PKVN_sep, ##args)
 #define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
 
-#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !defined(_GNU_SOURCE)
-  /* XSI strerror_r() */
-# define _PKE_STRERROR(e, s, l)     \
-  {                                 \
-    int _r = strerror_r(e, s, l);   \
-    if (_r != 0) s = "";            \
-  }
-#else
-  /* GNU strerror_r() */
-# define _PKE_STRERROR(e, s, l)     \
-  {                                 \
-    char *_r = strerror_r(e, s, l); \
-    s = _r == NULL ? "" : _r;       \
-  }
-#endif
-
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
  *
@@ -220,7 +204,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 contain whitespace. Multiple variables may be presented by
  *                 giving more than one format / variable pair.
  *   - PKE()     - Print the given message, suffixed with the errno and relevant
- *                 string description - like perror().
+ *                 string description, if available - like perror().
  */
 
 #define PK()               _PK("")
@@ -229,14 +213,39 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKV(fmt_arg...)    _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
 #define PKVB(fmt_arg...)   _PK(": " _PKVBN_fmt(fmt_arg), _PKVN_var(fmt_arg))
 
-#define PKE(fmt, args...)                                         \
-  {                                                               \
-    int _e = errno; char _s[1024]; char *_c = &(_s[0]);           \
-    _PKE_STRERROR(_e, _c, sizeof(_s));                            \
-    if (_c[0] == '\0') _c = "Unknown error";                      \
-    _PK(": " fmt ": %d / %.*s", ##args, _e, (int)sizeof(_s), _c); \
-    errno = _e;                                                   \
-  }
+#if !defined(__KERNEL__)
+/* user-space gets access to strerror_r(), and can thus try to be more descriptive */
+# if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !defined(_GNU_SOURCE)
+    /* XSI strerror_r() */
+#   define _PKE_SE(e, s, l) { int _r = strerror_r(e, s, l); if (_r != 0) s = ""; }
+# else
+    /* GNU strerror_r() */
+#   define _PKE_SE(e, s, l) { char *_r = strerror_r(e, s, l); s = _r == NULL ? "" : _r; }
+# endif
+# define PKE(fmt, args...)                                         \
+   {                                                               \
+     int _e = errno; char _s[1024]; char *_c = &(_s[0]);           \
+     _PKE_SE(_e, _c, sizeof(_s));                                  \
+     if (_c[0] == '\0') _c = "Unknown error";                      \
+     _PK(": " fmt ": %d / %.*s", ##args, _e, (int)sizeof(_s), _c); \
+     errno = _e;                                                   \
+   }
+#else
+/* kernel-space does not have access to strerror_r() */
+# define PKE(fmt, args...)             \
+   {                                   \
+     int _e = errno;                   \
+     _PK(": " fmt ": %d", ##args, _e); \
+     errno = _e;                       \
+   }
+#endif
+
+#define PKR(ret_type, ret_fmt, op) \
+  ({ \
+    ret_type _ret = ( op ); \
+    PKF(#op " --> " ret_fmt, _ret); \
+    _ret; \
+  })
 
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * TIME-BASED MESSAGES:
