@@ -179,11 +179,9 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  */
 
 #define _PKV_fmt(fmt, var)   #var ": " fmt
-#define _PKVB_fmt(fmt, var)  #var ": [" fmt "]"
 #define _PKV_var(fmt, var)   var
 #define _PKVN_sep()          ",  "
 #define _PKVN_fmt(args...)   MAP_PAIRS(_PKV_fmt,  _PKVN_sep, ##args)
-#define _PKVBN_fmt(args...)  MAP_PAIRS(_PKVB_fmt, _PKVN_sep, ##args)
 #define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
 
 /* These macros are the intended public interface for generic messages, and
@@ -197,12 +195,9 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 associated arguments.
  *   - PKV()     - Print the name and value of a variable using the given format
  *                 string. Multiple variables may be presented by giving more
- *                 than one format / variable pair.
- *   - PKVB()    - Print the name and value of a variable using the given format
- *                 string. Additionally enclose the variable's value in square
- *                 brackets. This can be useful when printing strings that may
- *                 contain whitespace. Multiple variables may be presented by
- *                 giving more than one format / variable pair.
+ *                 than one format / variable pair. It can be useful to include
+ *                 square brackets around a string format to show the start and
+ *                 end clearly.
  *   - PKE()     - Print the given message, suffixed with the errno and relevant
  *                 string description, if available - like perror().
  */
@@ -211,7 +206,6 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKS(str)           _PK(": %s", str)
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
 #define PKV(fmt_arg...)    _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
-#define PKVB(fmt_arg...)   _PK(": " _PKVBN_fmt(fmt_arg), _PKVN_var(fmt_arg))
 
 #if !defined(__KERNEL__)
 /* user-space gets access to strerror_r(), and can thus try to be more descriptive */

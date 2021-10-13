@@ -38,13 +38,13 @@ int main(int argc, char *argv[]) {
 	PKF("I'm about to talk about 'i'");
 	PKF("'i' has the value %d", i);
 
-	/* PKV() and PKVB() will print the variable's name and value. PKVB() is
-	 * useful for showing variables that may contain whitespace
+	/* PKV() will print the variable's name and value. You can use square
+	 * brackets in the format string for values that may have whitespace
 	 */
 	PKV("%d", i);
-	PKVB("%s", s);
+	PKV("[%s]", s);
 
-	/* PKV() and PKVB() may also be used to print multiple name / value pairs
+	/* PKV() may also be used to print multiple name / value pairs
 	 */
 	PKV("%d", i, "[%s]", s);
 
