@@ -184,6 +184,12 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define _PKVN_fmt(args...)   MAP_PAIRS(_PKV_fmt,  _PKVN_sep, ##args)
 #define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
 
+#define _PKVS_fmt(s, fmt, var)   #s "." #var ": " fmt
+#define _PKVS_var(s, fmt, var)   s.var
+#define _PKVSN_sep()             "\n  "
+#define _PKVSN_fmt(s, args...)   MAP_PAIRS_ARG(_PKVS_fmt, _PKVSN_sep, s, ##args)
+#define _PKVSN_var(s, args...)   MAP_PAIRS_ARG(_PKVS_var, COMMA, s, ##args)
+
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
  *
@@ -198,6 +204,8 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 than one format / variable pair. It can be useful to include
  *                 square brackets around a string format to show the start and
  *                 end clearly.
+ *   - PKVS()    - Print members of a struct, using the given member name and
+ *                 format strings. Operates in the same way as PKV().
  *   - PKE()     - Print the given message, suffixed with the errno and relevant
  *                 string description, if available - like perror().
  */
@@ -206,6 +214,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKS(str)           _PK(": %s", str)
 #define PKF(fmt, args...)  _PK(": " fmt, ##args)
 #define PKV(fmt_arg...)    _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
+#define PKVS(s, fmt_arg...) _PK(": members from struct <" #s ">:\n  " _PKVSN_fmt(s, fmt_arg), _PKVSN_var(s, fmt_arg))
 
 #if !defined(__KERNEL__)
 /* user-space gets access to strerror_r(), and can thus try to be more descriptive */

@@ -8,9 +8,15 @@
 /* unistd.h for sleeping */
 #include <unistd.h>
 
+struct foo {
+	int bar;
+	char *baz;
+};
+
 int main(int argc, char *argv[]) {
 	int i, o;
 	char s[] = "  test string with some whitespace  ";
+	struct foo foo_instance;
 	struct timespec t, a;
 
 	/* Step 3. Use it!
@@ -47,6 +53,17 @@ int main(int argc, char *argv[]) {
 	/* PKV() may also be used to print multiple name / value pairs
 	 */
 	PKV("%d", i, "[%s]", s);
+
+	/* PKVS() allows easy access to multiple struct members at once
+	 */
+	memset(&foo_instance, 0, sizeof(foo_instance));
+	foo_instance.bar = 1234;
+	foo_instance.baz = "  hello there  ";
+
+	PKVS(foo_instance,
+		"%d",   bar,
+		"[%s]", baz
+	);
 
 	/* PKE() will output the value of errno, and the relevant descripive string
 	 */
