@@ -130,7 +130,7 @@
  * and function name from the original location the macro was used.
  */
 static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_data, size_t len) {
-	const uint8_t *data = _data;
+	const uint8_t *data = (const uint8_t *)_data;
 	size_t i, o;
 	char buf_hex  [(PK_DUMP_WIDTH * 3) + 1];
 	char buf_print[ PK_DUMP_WIDTH      + 1];
