@@ -29,13 +29,13 @@
 #ifndef PK_FUNC
 # if defined(__KERNEL__) && defined(__UBOOT__)
     /* U-Boot */
-#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt "\n",  ##args)
+#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt "\n", ##args)
 # elif defined(__KERNEL__) && defined(__linux__)
     /* Linux Kernel */
-#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,       ##args)
+#   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,      ##args)
 # else
     /* Userspace */
-#   define PK_FUNC(fmt, args...) fprintf(stderr,   fmt "\n", ##args)
+#   define PK_FUNC(fmt, args...) fprintf(stderr,  fmt "\n", ##args)
 # endif
 #endif
 
