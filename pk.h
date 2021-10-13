@@ -210,10 +210,10 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 string description, if available - like perror().
  */
 
-#define PK()               _PK("")
-#define PKS(str)           _PK(": %s", str)
-#define PKF(fmt, args...)  _PK(": " fmt, ##args)
-#define PKV(fmt_arg...)    _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
+#define PK()                _PK("")
+#define PKS(str)            _PK(": %s", str)
+#define PKF(fmt, args...)   _PK(": " fmt, ##args)
+#define PKV(fmt_arg...)     _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
 #define PKVS(s, fmt_arg...) _PK(": members from struct <" #s ">:\n  " _PKVSN_fmt(s, fmt_arg), _PKVSN_var(s, fmt_arg))
 
 #if !defined(__KERNEL__)
