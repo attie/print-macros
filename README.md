@@ -31,7 +31,7 @@ The example application can be built and run by running `make run`.
 - `PK()` - A quick and easy notice that the execution path traversed this line.
 - `PKS(str)` - The same as `PK()`, but includes a static string.
 - `PKF(fmt, args...)` - The same as `PK()`, but permits a fully-formed format string and associated arguments.
-- `PKV(fmt, var)` - Generates output with the variable's name and value, formatted by `fmt`.
+- `PKV(fmt, var, ...)` - Generates output with the variable's name and value, formatted by `fmt`.
 - `PKE(fmt, args...)` - The same as `PKF()`, but with the value of errno and relevant string description.
 
 ### Timing
