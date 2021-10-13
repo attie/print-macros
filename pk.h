@@ -404,5 +404,13 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
     sep() DEFER2(_MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__) \
   )
 #define _MAP_PAIRS_INNER() MAP_PAIRS_INNER
+#define MAP_PAIRS_ARG(op,sep,arg,...) \
+  IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_PAIRS_ARG_INNER(op,sep,arg,__VA_ARGS__)))
+#define MAP_PAIRS_ARG_INNER(op,sep,arg,cur_val_1, cur_val_2, ...) \
+  op(arg,cur_val_1,cur_val_2) \
+  IF(HAS_ARGS(__VA_ARGS__))( \
+    sep() DEFER2(_MAP_PAIRS_ARG_INNER)()(op, sep, arg, __VA_ARGS__) \
+  )
+#define _MAP_PAIRS_ARG_INNER() MAP_PAIRS_ARG_INNER
 
 #endif /* PK_H */
