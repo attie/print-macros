@@ -33,6 +33,9 @@
 # elif defined(__KERNEL__) && defined(__linux__)
     /* Linux Kernel */
 #   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,      ##args)
+# elif                        defined(__ZEPHYR__)
+    /* Zephyr Kernel */
+#   define PK_FUNC(fmt, args...)  printk(         fmt "\n", ##args)
 # else
     /* Userspace */
 #   define PK_FUNC(fmt, args...) fprintf(stderr,  fmt "\n", ##args)
@@ -216,7 +219,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKV(fmt_arg...)     _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
 #define PKVS(s, fmt_arg...) _PK(": members from struct <" #s ">:\n  " _PKVSN_fmt(s, fmt_arg), _PKVSN_var(s, fmt_arg))
 
-#if !defined(__KERNEL__)
+#if !defined(__KERNEL__) && !defined(__ZEPHYR__)
 /* user-space gets access to strerror_r(), and can thus try to be more descriptive */
 # if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !defined(_GNU_SOURCE)
     /* XSI strerror_r() */
