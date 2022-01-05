@@ -181,14 +181,14 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define _PKV_fmt(fmt, var)   #var ": " fmt
 #define _PKV_var(fmt, var)   var
 #define _PKVN_sep()          ",  "
-#define _PKVN_fmt(args...)   MAP_PAIRS(_PKV_fmt,  _PKVN_sep, ##args)
-#define _PKVN_var(args...)   MAP_PAIRS(_PKV_var,  COMMA,     ##args)
+#define _PKVN_fmt(args...)   PK_MAP_PAIRS(_PKV_fmt,  _PKVN_sep, ##args)
+#define _PKVN_var(args...)   PK_MAP_PAIRS(_PKV_var,  PK_COMMA,     ##args)
 
 #define _PKVS_fmt(s, fmt, var)   #s "." #var ": " fmt
 #define _PKVS_var(s, fmt, var)   s.var
 #define _PKVSN_sep()             "\n  "
-#define _PKVSN_fmt(s, args...)   MAP_PAIRS_ARG(_PKVS_fmt, _PKVSN_sep, s, ##args)
-#define _PKVSN_var(s, args...)   MAP_PAIRS_ARG(_PKVS_var, COMMA, s, ##args)
+#define _PKVSN_fmt(s, args...)   PK_MAP_PAIRS_ARG(_PKVS_fmt, _PKVSN_sep, s, ##args)
+#define _PKVSN_var(s, args...)   PK_MAP_PAIRS_ARG(_PKVS_var, PK_COMMA, s, ##args)
 
 /* These macros are the intended public interface for generic messages, and
  * should be used from within your application.
@@ -376,50 +376,50 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 /* the following macros are copied from the uSHET project:
  *    https://github.com/18sg/uSHET/blob/master/lib/cpp_magic.h
  * please refer to the source for documentation */
-#define EVAL(...) EVAL1024(__VA_ARGS__)
-#define EVAL1024(...) EVAL512(EVAL512(__VA_ARGS__))
-#define EVAL512(...) EVAL256(EVAL256(__VA_ARGS__))
-#define EVAL256(...) EVAL128(EVAL128(__VA_ARGS__))
-#define EVAL128(...) EVAL64(EVAL64(__VA_ARGS__))
-#define EVAL64(...) EVAL32(EVAL32(__VA_ARGS__))
-#define EVAL32(...) EVAL16(EVAL16(__VA_ARGS__))
-#define EVAL16(...) EVAL8(EVAL8(__VA_ARGS__))
-#define EVAL8(...) EVAL4(EVAL4(__VA_ARGS__))
-#define EVAL4(...) EVAL2(EVAL2(__VA_ARGS__))
-#define EVAL2(...) EVAL1(EVAL1(__VA_ARGS__))
-#define EVAL1(...) __VA_ARGS__
-#define EMPTY()
-#define COMMA() ,
-#define BOOL(x) NOT(NOT(x))
-#define DEFER2(id) id EMPTY EMPTY()()
-#define CAT(a, ...) a ## __VA_ARGS__
-#define FIRST(a, ...) a
-#define SECOND(a, b, ...) b
-#define IS_PROBE(...) SECOND(__VA_ARGS__, 0)
-#define PROBE() ~, 1
-#define NOT(x) IS_PROBE(CAT(_NOT_, x))
-#define _NOT_0 PROBE()
-#define IF(c) _IF(BOOL(c))
-#define _IF(c) CAT(_IF_,c)
-#define _IF_0(...)
-#define _IF_1(...) __VA_ARGS__
-#define HAS_ARGS(...) BOOL(FIRST(_END_OF_ARGUMENTS_ __VA_ARGS__)(0))
-#define _END_OF_ARGUMENTS_(...) BOOL(FIRST(__VA_ARGS__))
-#define MAP_PAIRS(op,sep,...) \
-  IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_PAIRS_INNER(op,sep,__VA_ARGS__)))
-#define MAP_PAIRS_INNER(op,sep,cur_val_1, cur_val_2, ...) \
+#define PK_EVAL(...) PK_EVAL1024(__VA_ARGS__)
+#define PK_EVAL1024(...) PK_EVAL512(PK_EVAL512(__VA_ARGS__))
+#define PK_EVAL512(...) PK_EVAL256(PK_EVAL256(__VA_ARGS__))
+#define PK_EVAL256(...) PK_EVAL128(PK_EVAL128(__VA_ARGS__))
+#define PK_EVAL128(...) PK_EVAL64(PK_EVAL64(__VA_ARGS__))
+#define PK_EVAL64(...) PK_EVAL32(PK_EVAL32(__VA_ARGS__))
+#define PK_EVAL32(...) PK_EVAL16(PK_EVAL16(__VA_ARGS__))
+#define PK_EVAL16(...) PK_EVAL8(PK_EVAL8(__VA_ARGS__))
+#define PK_EVAL8(...) PK_EVAL4(PK_EVAL4(__VA_ARGS__))
+#define PK_EVAL4(...) PK_EVAL2(PK_EVAL2(__VA_ARGS__))
+#define PK_EVAL2(...) PK_EVAL1(PK_EVAL1(__VA_ARGS__))
+#define PK_EVAL1(...) __VA_ARGS__
+#define PK_EMPTY()
+#define PK_COMMA() ,
+#define PK_BOOL(x) NOT(NOT(x))
+#define PK_DEFER2(id) id PK_EMPTY PK_EMPTY()()
+#define PK_CAT(a, ...) a ## __VA_ARGS__
+#define PK_FIRST(a, ...) a
+#define PK_SECOND(a, b, ...) b
+#define PK_IS_PROBE(...) PK_SECOND(__VA_ARGS__, 0)
+#define PK_PROBE() ~, 1
+#define NOT(x) PK_IS_PROBE(PK_CAT(PK__NOT_, x))
+#define PK__NOT_0 PK_PROBE()
+#define PK_IF(c) PK__IF(PK_BOOL(c))
+#define PK__IF(c) PK_CAT(PK__IF_,c)
+#define PK__IF_0(...)
+#define PK__IF_1(...) __VA_ARGS__
+#define PK_HAS_ARGS(...) PK_BOOL(PK_FIRST(PK__END_OF_ARGUMENTS_ __VA_ARGS__)(0))
+#define PK__END_OF_ARGUMENTS_(...) PK_BOOL(PK_FIRST(__VA_ARGS__))
+#define PK_MAP_PAIRS(op,sep,...) \
+  PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PK_EVAL(PK_MAP_PAIRS_INNER(op,sep,__VA_ARGS__)))
+#define PK_MAP_PAIRS_INNER(op,sep,cur_val_1, cur_val_2, ...) \
   op(cur_val_1,cur_val_2) \
-  IF(HAS_ARGS(__VA_ARGS__))( \
-    sep() DEFER2(_MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__) \
+  PK_IF(PK_HAS_ARGS(__VA_ARGS__))( \
+    sep() PK_DEFER2(PK__MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__) \
   )
-#define _MAP_PAIRS_INNER() MAP_PAIRS_INNER
-#define MAP_PAIRS_ARG(op,sep,arg,...) \
-  IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_PAIRS_ARG_INNER(op,sep,arg,__VA_ARGS__)))
-#define MAP_PAIRS_ARG_INNER(op,sep,arg,cur_val_1, cur_val_2, ...) \
+#define PK__MAP_PAIRS_INNER() PK_MAP_PAIRS_INNER
+#define PK_MAP_PAIRS_ARG(op,sep,arg,...) \
+  PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PK_EVAL(PK_MAP_PAIRS_ARG_INNER(op,sep,arg,__VA_ARGS__)))
+#define PK_MAP_PAIRS_ARG_INNER(op,sep,arg,cur_val_1, cur_val_2, ...) \
   op(arg,cur_val_1,cur_val_2) \
-  IF(HAS_ARGS(__VA_ARGS__))( \
-    sep() DEFER2(_MAP_PAIRS_ARG_INNER)()(op, sep, arg, __VA_ARGS__) \
+  PK_IF(PK_HAS_ARGS(__VA_ARGS__))( \
+    sep() PK_DEFER2(PK__MAP_PAIRS_ARG_INNER)()(op, sep, arg, __VA_ARGS__) \
   )
-#define _MAP_PAIRS_ARG_INNER() MAP_PAIRS_ARG_INNER
+#define PK__MAP_PAIRS_ARG_INNER() PK_MAP_PAIRS_ARG_INNER
 
 #endif /* PK_H */
