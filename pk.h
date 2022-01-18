@@ -60,7 +60,11 @@
  * INTERNAL / SUPPORT:
  */
 
-#ifndef __KERNEL__
+#if defined(__ZEPHYR__)
+# include <stdio.h>
+# include <string.h>
+# include <sys/printk.h>
+#elif !defined(__KERNEL__)
 # include <stdio.h>
 # include <stdint.h>
 # include <string.h>
