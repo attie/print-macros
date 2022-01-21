@@ -355,21 +355,21 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 present in the generated output. Output is terminated on a
  *                 nul character ('\0').
  */
-#define PKDUMP(data, len, fmt, args...)             \
-  {                                                 \
-    PKF("DUMP: " fmt, ##args);                      \
-    PKF("DUMP: %zu bytes @ %p", (size_t)len, data); \
-    if ((data != NULL) && (len != 0)) {             \
-      PKF("DUMP: ---8<---[ dump begins ]---8<---"); \
-      _pk_dump(_PKFL, __func__, data, len);         \
-      PKF("DUMP: ---8<---[  dump ends  ]---8<---"); \
-    }                                               \
+#define PKDUMP(data, len, ...)                                  \
+  {                                                             \
+    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("DUMP: " __VA_ARGS__);) \
+    PKF("DUMP: %zu bytes @ %p", (size_t)len, data);             \
+    if ((data != NULL) && (len != 0)) {                         \
+      PKF("DUMP: ---8<---[ dump begins ]---8<---");             \
+      _pk_dump(_PKFL, __func__, data, len);                     \
+      PKF("DUMP: ---8<---[  dump ends  ]---8<---");             \
+    }                                                           \
   }
 
-#define PKLINES(data, len, fmt, args...)                                            \
+#define PKLINES(data, len, ...)                                                     \
   {                                                                                 \
     int i = 0; size_t ll; const char *ls, *p = NULL;                                \
-    PKF("LINES: " fmt, ##args);                                                     \
+    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("LINES: " __VA_ARGS__);)                    \
     PKF("LINES: %zu chars max @ %p", (size_t)len, data);                            \
     if ((data != NULL) && (len != 0)) {                                             \
       PKF("LINES: ---8<---[ output begins ]---8<---");                              \
