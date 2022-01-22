@@ -300,7 +300,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 # define PKTSTART(ts)                                                \
   {                                                                  \
     int _ret;                                                        \
-    if ((_ret = clock_gettime(CLOCK_REALTIME, &(ts))) != 0)          \
+    if ((_ret = clock_gettime(CLOCK_MONOTONIC, &(ts))) != 0)         \
       PKF("PKTSTART: clock_gettime(&" #ts ") returned %d...", _ret); \
   }
 #endif
