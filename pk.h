@@ -297,6 +297,9 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 # define PKTSTART(ts) getrawmonotonic(&(ts))
 #else
 # include <time.h>
+# ifdef __ZEPHYR__
+#   include <posix/time.h>
+# endif
 # define PKTSTART(ts)                                                \
   {                                                                  \
     int _ret;                                                        \
