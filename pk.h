@@ -253,7 +253,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKR(ret_type, ret_fmt, op) \
   ({ \
     ret_type _ret = ( op ); \
-    PKF(#op " --> " ret_fmt, _ret); \
+    PKF("%s --> " ret_fmt, #op, _ret); \
     _ret; \
   })
 
