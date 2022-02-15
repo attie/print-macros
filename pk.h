@@ -163,7 +163,8 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
  * pointer indicates the start of the chunk, and `*chunklen` indicates the
  * length of that chunk. The buffer is never modified, so when passing the chunk
  * to printf() or similar, a "%.*s" format string should be used. Zero length
- * chunkss (i.e: "\n\n") are maintained. */
+ * chunkss (i.e: "\n\n") are maintained.
+ */
 static inline const char *_pk_nextchunk(const char *buf, size_t len, const char **cookie, size_t *chunklen, const char c) {
 	const char *start, *end;
 
@@ -385,7 +386,8 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 
 /* the following macros are copied from the uSHET project:
  *    https://github.com/18sg/uSHET/blob/master/lib/cpp_magic.h
- * please refer to the source for documentation */
+ * please refer to the source for documentation
+ */
 #define PK_EVAL(...) PK_EVAL1024(__VA_ARGS__)
 #define PK_EVAL1024(...) PK_EVAL512(PK_EVAL512(__VA_ARGS__))
 #define PK_EVAL512(...) PK_EVAL256(PK_EVAL256(__VA_ARGS__))
