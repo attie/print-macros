@@ -362,7 +362,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKDUMP(data, len, ...)                                  \
   {                                                             \
     PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("DUMP: " __VA_ARGS__);) \
-    PKF("DUMP: %zu bytes @ %p", (size_t)len, data);             \
+    PKF("DUMP: %zu bytes @ 0x%08x", (size_t)len, data);         \
     if ((data != NULL) && (len != 0)) {                         \
       PKF("DUMP: ---8<---[ dump begins ]---8<---");             \
       _pk_dump(_PKFL, __func__, data, len);                     \
