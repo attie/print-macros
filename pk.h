@@ -151,9 +151,10 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
 		if ((o < (PK_DUMP_WIDTH - 1)) && (i < (len - 1))) continue;
 
 		PK_FUNC(PK_TAG ": %s %s(): DUMP: 0x%04zx:%-*.*s | %.*s",
-			_pkfl, _pkfn, i - o,
-			PK_DUMP_WIDTH * 3, (int)((o+1) * 3), buf_hex,
-			                   (int) (o+1),      buf_print
+			_pkfl, _pkfn,
+			i - o, PK_DUMP_WIDTH * 3,
+			(int)((o+1) * 3), buf_hex,
+			(int) (o+1),      buf_print
 		);
 	}
 }
