@@ -32,7 +32,7 @@ class PKDUMP:
         self.partial = {}
 
         self.pkdump_line   = re.compile(b'^' + pk_tag.encode('utf-8') + b': (?P<file>.+):(?P<line>[0-9]+) (?P<func>.+)\(\): DUMP: (?P<msg>.*)$')
-        self.pkdump_header = re.compile(b'^(?P<len>[0-9]+) bytes @ (?P<addr>0x[0-9a-f]+)$')
+        self.pkdump_header = re.compile(b'^(?P<len>[0-9]+) bytes @ (?P<addr>(0x)?[0-9a-f]+)$')
         self.pkdump_begin  = re.compile(b'^---8<---\[ dump begins \]---8<---$')
         self.pkdump_data   = re.compile(b'^(?P<offset>0x[0-9a-f]+): (?P<data>(?:[0-9a-f]{2} )+) *\| .{1,16}$')
         self.pkdump_end    = re.compile(b'^---8<---\[  dump ends  \]---8<---$')
