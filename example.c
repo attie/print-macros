@@ -13,8 +13,10 @@ struct foo {
 	char *baz;
 };
 
+int test_fn(void) { return 42; }
+
 int main(int argc, char *argv[]) {
-	int i, o;
+	int i, o, ret;
 	char s[] = "  test string with some whitespace  ";
 	struct foo foo_instance;
 	struct timespec t, a;
@@ -70,6 +72,13 @@ int main(int argc, char *argv[]) {
 	errno = EINVAL;
 	PKE("uhoh");
 	PKE("uhoh, myfunc() failed %d times", 3);
+
+	/* PKR() will output the function and its return value, and may be used in
+	 * assignments
+	 */
+	ret = PKR(int, "%d", test_fn());
+	ret = PKRIF(int, "%d", == 42, test_fn()); /* condition is met, output */
+	ret = PKRIF(int, "%d",  < 42, test_fn()); /* condition is not met, no output */
 
 	/* --- time-based messages --- */
 
