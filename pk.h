@@ -34,7 +34,7 @@
     /* Linux Kernel */
 #   define PK_FUNC(fmt, args...)  printk(PK_LEVEL fmt,      ##args)
 # elif                        defined(__ZEPHYR__)
-    /* Zephyr Kernel */
+    /* Zephyr RTOS */
 #   define PK_FUNC(fmt, args...)  printk(         fmt "\n", ##args)
 # else
     /* Userspace */

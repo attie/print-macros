@@ -1,7 +1,7 @@
 # Attie's `printf()` / `printk()` Support Macros
 
 These are intended only for development purposes, and are not considered suitable for use in production-ready code.
-This header file should perform correctly when used from within all of U-Boot, the Linux kernel, as well as userspace.
+This header file should perform correctly when used from within all of U-Boot, the Linux kernel, Zephyr, as well as userspace.
 
 Effort has been made to reduce the processing required at run-time, in an attempt at reducing unwanted side effects.
 
