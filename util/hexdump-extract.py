@@ -13,11 +13,11 @@ class PKDUMP:
     """
     Parse log files with the following text - produced by PKDUMP()
 
-    ATTIE: example.c:50 example(): DUMP: user comment...
-    ATTIE: example.c:50 example(): DUMP: 16 bytes @ 0x20000000
-    ATTIE: example.c:50 example(): DUMP: ---8<---[ dump begins ]---8<---
-    ATTIE: example.c:50 example(): DUMP: 0x0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
-    ATTIE: example.c:50 example(): DUMP: ---8<---[  dump ends  ]---8<---
+    PK: example.c:50 example(): DUMP: user comment...
+    PK: example.c:50 example(): DUMP: 16 bytes @ 0x20000000
+    PK: example.c:50 example(): DUMP: ---8<---[ dump begins ]---8<---
+    PK: example.c:50 example(): DUMP: 0x0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+    PK: example.c:50 example(): DUMP: ---8<---[  dump ends  ]---8<---
     """
 
     pk_handlers = (
@@ -28,7 +28,7 @@ class PKDUMP:
         ( 'DATA',         'IDLE',      'pkdump_end',    'handle_end'    ),
     )
 
-    def __init__(self, pk_tag='ATTIE'):
+    def __init__(self, pk_tag='PK'):
         self.partial = {}
 
         self.pkdump_line   = re.compile(b'^' + pk_tag.encode('utf-8') + b': (?P<file>.+):(?P<line>[0-9]+) (?P<func>.+)\(\): DUMP: (?P<msg>.*)$')
@@ -121,7 +121,7 @@ def get_args():
     parser = argparse.ArgumentParser(description="Extract BLOBs from the output of pk.h's PKDUMP() macro")
     parser.add_argument('f', metavar='filename', type=argparse.FileType('rb'), help='the log file')
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('-T', '--pk-tag',  type=str, default='ATTIE')
+    parser.add_argument('-T', '--pk-tag',  type=str, default='PK')
     parser.add_argument('--c-file',   type=str, help='only extract from this C file')
     parser.add_argument('--c-line',   type=int, help='only extract from this C line')
     parser.add_argument('--c-func',   type=str, help='only extract from this C function')

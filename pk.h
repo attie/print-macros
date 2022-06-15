@@ -46,7 +46,7 @@
  * this text to support better filtering of any messages generated.
  */
 #ifndef PK_TAG
-# define PK_TAG "ATTIE"
+# define PK_TAG "PK"
 #endif
 
 /* Optionally define PK_DUMP_WIDTH to adjust the width of hexdump output, in
