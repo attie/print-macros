@@ -63,7 +63,7 @@
 #if defined(__ZEPHYR__)
 # include <stdio.h>
 # include <string.h>
-# include <sys/printk.h>
+# include <zephyr/sys/printk.h>
 #elif !defined(__KERNEL__)
 # include <stdio.h>
 # include <stdint.h>
@@ -309,7 +309,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #else
 # include <time.h>
 # ifdef __ZEPHYR__
-#   include <posix/time.h>
+#   include <zephyr/posix/time.h>
 # endif
 # define PKTSTART(ts)                                                \
   {                                                                  \
