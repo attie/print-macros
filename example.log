@@ -12,21 +12,21 @@ PK-EXAMPLE: example.c:73 main(): uhoh: 22 / Invalid argument
 PK-EXAMPLE: example.c:74 main(): uhoh, myfunc() failed 3 times: 22 / Invalid argument
 PK-EXAMPLE: example.c:79 main(): test_fn() --> 42
 PK-EXAMPLE: example.c:80 main(): test_fn() --> 42
-PK-EXAMPLE: example.c:94 main(): TSTAMP @ 8573055.014411943: the answer is 42
-PK-EXAMPLE: example.c:99 main(): TDIFF(t) @ 0.000006208: that was fast!
-PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.001111266: iteration 0
-PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.002225353: iteration 1
-PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.003343410: iteration 2
-PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.004411410: iteration 3
-PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.005528765: iteration 4
-PK-EXAMPLE: example.c:121 main(): TRATE(t), n=10, t=0.010119486, f=988.193 Hz: we waited for ~10ms for 10 items... which is ~1ms each, or 1 kHz!
-PK-EXAMPLE: example.c:129 main(): TRAW(t) @ 1674235871.228743382
-PK-EXAMPLE: example.c:130 main(): TRAWS(t) @ 1674235871.228743382: static message
-PK-EXAMPLE: example.c:131 main(): TRAWF(t) @ 1674235871.228743382: format string 42
+PK-EXAMPLE: example.c:94 main(): TSTAMP @ 8593142.774314958: the answer is 42
+PK-EXAMPLE: example.c:99 main(): TDIFF(t) @ 0.000001102: that was fast!
+PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.001164958: iteration 0
+PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.002313873: iteration 1
+PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.003444824: iteration 2
+PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.004567696: iteration 3
+PK-EXAMPLE: example.c:114 main(): TACC(a) @ 0.005681093: iteration 4
+PK-EXAMPLE: example.c:121 main(): TRATE(t), n=10, t=0.010114471, f=988.682 Hz: we waited for ~10ms for 10 items... which is ~1ms each, or 1 kHz!
+PK-EXAMPLE: example.c:129 main(): TRAW(t) @ 1674255958.988832071
+PK-EXAMPLE: example.c:130 main(): TRAWS(t) @ 1674255958.988832071: static message
+PK-EXAMPLE: example.c:131 main(): TRAWF(t) @ 1674255958.988832071: format string 42
 PK-EXAMPLE: example.c:142 main(): DUMP: this has no data or length
 PK-EXAMPLE: example.c:142 main(): DUMP: 0 bytes @ (nil)
 PK-EXAMPLE: example.c:143 main(): DUMP: this is our friendly string
-PK-EXAMPLE: example.c:143 main(): DUMP: 37 bytes @ 0x7ffff41f76a0
+PK-EXAMPLE: example.c:143 main(): DUMP: 37 bytes @ 0x7ffd195e7860
 PK-EXAMPLE: example.c:143 main(): DUMP: ---8<---[ dump begins ]---8<---
 PK-EXAMPLE: example.c:143 main(): DUMP: 0x0000: 20 20 74 65 73 74 20 73 74 72 69 6e 67 20 77 69 |   test string wi
 PK-EXAMPLE: example.c:143 main(): DUMP: 0x0010: 74 68 20 73 6f 6d 65 20 77 68 69 74 65 73 70 61 | th some whitespa
@@ -34,11 +34,13 @@ PK-EXAMPLE: example.c:143 main(): DUMP: 0x0020: 63 65 20 20 00                  
 PK-EXAMPLE: example.c:143 main(): DUMP: ---8<---[  dump ends  ]---8<---
 PK-EXAMPLE: example.c:148 main(): BSTR: 0x0000: hello
 PK-EXAMPLE: example.c:149 main(): BSTR: 0x0000: hello\x09there
-PK-EXAMPLE: example.c:153 main(): LINES: this is a multi-line string
-PK-EXAMPLE: example.c:153 main(): LINES: 128 chars max @ 0x40238c
-PK-EXAMPLE: example.c:153 main(): LINES: ---8<---[ output begins ]---8<---
-PK-EXAMPLE: example.c:153 main(): LINES: 00000: test block
-PK-EXAMPLE: example.c:153 main(): LINES: 00001: 
-PK-EXAMPLE: example.c:153 main(): LINES: 00002: of
-PK-EXAMPLE: example.c:153 main(): LINES: 00003: text
-PK-EXAMPLE: example.c:153 main(): LINES: ---8<---[  output ends  ]---8<---
+PK-EXAMPLE: example.c:154 main(): PSTR: 0x0000: hello
+PK-EXAMPLE: example.c:155 main(): PSTR: 0x0000: hello.there
+PK-EXAMPLE: example.c:159 main(): LINES: this is a multi-line string
+PK-EXAMPLE: example.c:159 main(): LINES: 128 chars max @ 0x40242c
+PK-EXAMPLE: example.c:159 main(): LINES: ---8<---[ output begins ]---8<---
+PK-EXAMPLE: example.c:159 main(): LINES: 00000: test block
+PK-EXAMPLE: example.c:159 main(): LINES: 00001: 
+PK-EXAMPLE: example.c:159 main(): LINES: 00002: of
+PK-EXAMPLE: example.c:159 main(): LINES: 00003: text
+PK-EXAMPLE: example.c:159 main(): LINES: ---8<---[  output ends  ]---8<---

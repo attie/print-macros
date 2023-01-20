@@ -163,7 +163,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
 	}
 }
 
-static inline void _pk_bstr(const char *_pkfl, const char *_pkfn, const void *_data, size_t len) {
+static inline void _pk_bstr(const char *_pkfl, const char *_pkfn, uint8_t escape, const void *_data, size_t len) {
 	const uint8_t *data = (const uint8_t *)_data;
 	size_t i, o, p;
 	char buf_print[PK_BSTR_WIDTH + 1];
@@ -173,6 +173,8 @@ static inline void _pk_bstr(const char *_pkfl, const char *_pkfn, const void *_d
 
 		if ((data[i] >= ' ') && (data[i] <= '~')) {
 			buf_print[o++] = data[i];
+		} else if (!escape) {
+			buf_print[o++] = '.';
 		} else if ((o+4) <= PK_BSTR_WIDTH) {
 			snprintf(&(buf_print[o]), 5, "\\x%02hhx", data[i]);
 			o += 4;
@@ -187,8 +189,8 @@ static inline void _pk_bstr(const char *_pkfl, const char *_pkfn, const void *_d
 
 		if ((o < PK_BSTR_WIDTH) && (i < (len - 1))) continue;
 
-		PK_FUNC(PK_TAG ": %s %s(): BSTR: 0x%04zx: %-.*s",
-			_pkfl, _pkfn,
+		PK_FUNC(PK_TAG ": %s %s(): %cSTR: 0x%04zx: %-.*s",
+			_pkfl, _pkfn, escape ? 'B' : 'P',
 			p, (int)o, buf_print
 		);
 
@@ -403,6 +405,8 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 as escaped hex sequences ("\x??"). The output is not framed.
  *                 Due to the escaping, lines may not all convey the same amount
  *                 of data.
+ *   - PKPSTR()  - Similar to PKBSTR(), but non-print characters are rendered as
+ *                 a '.' rather than escaped hex sequences.
  *   - PKLINES() - Print a multi-line block of text with the given format string
  *                 and associated arguments as the header. The output will be
  *                 wrapped with cut marks, and all output will be prefixed with
@@ -425,7 +429,15 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
   {                                                             \
     PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("BSTR: " __VA_ARGS__);) \
     if ((data != NULL) && (len != 0)) {                         \
-      _pk_bstr(_PKFL, __func__, data, len);                     \
+      _pk_bstr(_PKFL, __func__, 1, data, len);                  \
+    }                                                           \
+  }
+
+#define PKPSTR(data, len, ...)                                  \
+  {                                                             \
+    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("BSTR: " __VA_ARGS__);) \
+    if ((data != NULL) && (len != 0)) {                         \
+      _pk_bstr(_PKFL, __func__, 0, data, len);                  \
     }                                                           \
   }
 

@@ -148,6 +148,12 @@ int main(int argc, char *argv[]) {
 	PKBSTR("hello", 5);
 	PKBSTR("hello\tthere", 11);
 
+	/* PKPSTR() will produce the data as text, with non-printcharacters rendered
+	 * as '.'
+	 */
+	PKPSTR("hello", 5);
+	PKPSTR("hello\tthere", 11);
+
 	/* PKLINES() will produce a nice looking multi-line block of text, and
 	 * shares many characteristics with PKDUMP() */
 	PKLINES("test block\n\nof\ntext", 128, "this is a multi-line string");
