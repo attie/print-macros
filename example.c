@@ -142,6 +142,12 @@ int main(int argc, char *argv[]) {
 	PKDUMP(NULL, 0, "this has no data or length");
 	PKDUMP(s, sizeof(s), "this is our friendly string");
 
+	/* PKBSTR() will produce the data as text, with non-printcharacters escaped
+	 * as hex sequences "\x??"
+	 */
+	PKBSTR("hello", 5);
+	PKBSTR("hello\tthere", 11);
+
 	/* PKLINES() will produce a nice looking multi-line block of text, and
 	 * shares many characteristics with PKDUMP() */
 	PKLINES("test block\n\nof\ntext", 128, "this is a multi-line string");

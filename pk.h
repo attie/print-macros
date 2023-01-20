@@ -56,6 +56,10 @@
 # define PK_DUMP_WIDTH 16
 #endif
 
+#ifndef PK_BSTR_WIDTH
+# define PK_BSTR_WIDTH 64
+#endif
+
 /* -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=- -=#=-
  * INTERNAL / SUPPORT:
  */
@@ -156,6 +160,39 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
 			(int)((o+1) * 3), buf_hex,
 			(int) (o+1),      buf_print
 		);
+	}
+}
+
+static inline void _pk_bstr(const char *_pkfl, const char *_pkfn, const void *_data, size_t len) {
+	const uint8_t *data = (const uint8_t *)_data;
+	size_t i, o, p;
+	char buf_print[PK_BSTR_WIDTH + 1];
+
+	for (i = 0, o = 0; (data != NULL) && (i < len); i++) {
+		if (o == 0) p = i;
+
+		if ((data[i] >= ' ') && (data[i] <= '~')) {
+			buf_print[o++] = data[i];
+		} else if ((o+4) <= PK_BSTR_WIDTH) {
+			snprintf(&(buf_print[o]), 5, "\\x%02hhx", data[i]);
+			o += 4;
+		} else {
+			/* if the escaped value won't fit, then terminate the string,
+			 * force the output, and re-try this byte on the next line
+			 */
+			buf_print[o] = '\0';
+			o = PK_BSTR_WIDTH;
+			i -= 1;
+		}
+
+		if ((o < PK_BSTR_WIDTH) && (i < (len - 1))) continue;
+
+		PK_FUNC(PK_TAG ": %s %s(): BSTR: 0x%04zx: %-.*s",
+			_pkfl, _pkfn,
+			p, (int)o, buf_print
+		);
+
+		o = 0;
 	}
 }
 
@@ -362,6 +399,10 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 marks, and all output will be prefixed with the same file,
  *                 line number and function name. "DUMP" is present in the
  *                 generated output.
+ *   - PKBSTR()  - Print the data as a text, with non-print characters rendered
+ *                 as escaped hex sequences ("\x??"). The output is not framed.
+ *                 Due to the escaping, lines may not all convey the same amount
+ *                 of data.
  *   - PKLINES() - Print a multi-line block of text with the given format string
  *                 and associated arguments as the header. The output will be
  *                 wrapped with cut marks, and all output will be prefixed with
@@ -377,6 +418,14 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
       PKF("DUMP: ---8<---[ dump begins ]---8<---");             \
       _pk_dump(_PKFL, __func__, data, len);                     \
       PKF("DUMP: ---8<---[  dump ends  ]---8<---");             \
+    }                                                           \
+  }
+
+#define PKBSTR(data, len, ...)                                  \
+  {                                                             \
+    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("BSTR: " __VA_ARGS__);) \
+    if ((data != NULL) && (len != 0)) {                         \
+      _pk_bstr(_PKFL, __func__, data, len);                     \
     }                                                           \
   }
 
