@@ -164,7 +164,7 @@ static inline void _pk_dump(const char *_pkfl, const char *_pkfn, const void *_d
  * pointer indicates the start of the chunk, and `*chunklen` indicates the
  * length of that chunk. The buffer is never modified, so when passing the chunk
  * to printf() or similar, a "%.*s" format string should be used. Zero length
- * chunkss (i.e: "\n\n") are maintained.
+ * chunks (i.e: "\n\n") are maintained.
  */
 static inline const char *_pk_nextchunk(const char *buf, size_t len, const char **cookie, size_t *chunklen, const char c) {
 	const char *start, *end;
@@ -364,7 +364,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
  *                 generated output.
  *   - PKLINES() - Print a multi-line block of text with the given format string
  *                 and associated arguments as the header. The output will be
- *                 wrapped wit cut marks, and all output will be prefixed with
+ *                 wrapped with cut marks, and all output will be prefixed with
  *                 the same file, line number and function name. "LINES" is
  *                 present in the generated output. Output is terminated on a
  *                 nul character ('\0').
