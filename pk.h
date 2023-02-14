@@ -435,7 +435,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 
 #define PKPSTR(data, len, ...)                                  \
   {                                                             \
-    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("BSTR: " __VA_ARGS__);) \
+    PK_IF(PK_HAS_ARGS(__VA_ARGS__))(PKF("PSTR: " __VA_ARGS__);) \
     if ((data != NULL) && (len != 0)) {                         \
       _pk_bstr(_PKFL, __func__, 0, data, len);                  \
     }                                                           \
