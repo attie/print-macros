@@ -262,7 +262,7 @@ static inline const char *_pk_nextchunk(const char *buf, size_t len, const char 
 #define PKS(str)            _PK(": %s", str)
 #define PKF(fmt, args...)   _PK(": " fmt, ##args)
 #define PKV(fmt_arg...)     _PK(": " _PKVN_fmt(fmt_arg),  _PKVN_var(fmt_arg))
-#define PKVS(s, fmt_arg...) _PK(": members from struct <" #s ">:\n  " _PKVSN_fmt(s, fmt_arg), _PKVSN_var(s, fmt_arg))
+#define PKVS(s, fmt_arg...) _PK(": members from struct <" _PKS(s) ">:\n  " _PKVSN_fmt((s), fmt_arg), _PKVSN_var((s), fmt_arg))
 
 #if !defined(__KERNEL__) && !defined(__ZEPHYR__)
 /* user-space gets access to strerror_r(), and can thus try to be more descriptive */
