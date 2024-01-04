@@ -66,7 +66,7 @@ class PKDUMP:
                 ret = fn(lineno, partial, info)
                 partial['state'] = state_next
             except NoStateChange:
-                continue
+                pass
             except SyncLost:
                 print(f'\x1b[91mWARNING: Sync lost on line {lineno}... data may be missing\x1b[0m')
                 ret = None
